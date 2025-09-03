@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simulador de Carrera</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Modal de configuración -->
+    <div id="configModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Configuración de carrera</h2>
+        <div class="form-grid">
+          <label>Modo de carrera
+            <select id="raceMode">
+              <option value="sim">Simulada</option>
+              <option value="real">Real (GPS)</option>
+            </select>
+          </label>
+          <label>Competidores
+            <input id="competitors" type="number" value="6" min="1" />
+          </label>
+          <label>Duración promedio (s)
+            <input id="avgSec" type="number" value="120" min="5" />
+          </label>
+          <label>Tick (ms)
+            <input id="tickMs" type="number" value="250" min="50" step="50" />
+          </label>
+          <label>Ancho lateral (m)
+            <input id="lateral" type="number" value="7" min="0" />
+          </label>
+          <label>Edición activa
+            <input id="editMode" type="checkbox" checked />
+          </label>
+          <label class="file">Cargar pista (JSON)
+            <input id="fileTrack" type="file" accept="application/json" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button id="btnClear" class="secondary">Limpiar pista</button>
+          <span class="spacer"></span>
+          <button id="btnCloseModal" class="secondary">Cerrar</button>
+          <button id="btnStop" class="secondary">Stop</button>
+          <button id="btnStart" class="primary">Iniciar</button>
+        </div>
+        <p class="hint">Clic en el mapa para agregar puntos (con edición activa). También puedes cargar un archivo JSON con un array de puntos {lat, lon}.</p>
+      </div>
+    </div>
+    <div id="layout">
+      <div id="map">
+        <div id="mapButtons">
+          <button id="btnConfig" title="Configuración">⚙️</button>
+          <button id="btnPlay" title="Iniciar">▶️</button>
+        </div>
+      </div>
+      <div id="sidebar">
+        <div id="leaderboard">
+          <h3>Posiciones</h3>
+          <ol id="boardList" class="cards"></ol>
+        </div>
+        <div id="chartPanel">
+          <h3>Velocidad vs Avance</h3>
+          <canvas id="speedChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="/app.js"></script>
+  </body>
+  </html>
