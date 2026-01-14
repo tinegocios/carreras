@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Modo Real (GPS en Vivo)
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: #BDBDBD;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .point-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .point-icon {
+            margin-right: 15px;
+            color: #4CAF50;
+            flex-shrink: 0;
+        }
+        .track-point {
+            fill: #4CAF50;
+            opacity: 0.7;
+        }
+        .gps-point {
+            fill: #FF5722;
+        }
+        .projection-line {
+            stroke: #FFC107;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.relative{position:relative}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mr-2{margin-right:0.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.flex{display:flex}.grid{display:grid}.h-full{height:100%}.w-1\/2{width:50%}.flex-1{flex:1 1 0%}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.gap-4{gap:1rem}.rounded{border-radius:0.25rem}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.p-12{padding:3rem}.p-3{padding:0.75rem}.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-semibold{font-weight:600}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-12 flex flex-col">
+   <!-- Title -->
+   <div class="title">
+    Modo Real (GPS en Vivo)
+   </div>
+   <!-- Subtitle -->
+   <div class="subtitle">
+    Procesamiento de fixes reales con proyección sobre pista y cálculo en tiempo real
+   </div>
+   <!-- Main Content -->
+   <div class="flex flex-1">
+    <!-- Left Column -->
+    <div class="w-1/2 pr-6">
+     <div class="content-box h-full flex flex-col">
+      <h3 class="text-xl font-semibold mb-4">
+       Procesamiento de Posiciones
+      </h3>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-satellite text-2xl">
+        </i>
+       </div>
+       <div>
+        El backend recibe coordenadas GPS de alta precisión a través de HTTP POST o WebSocket
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-map-marked-alt text-2xl">
+        </i>
+       </div>
+       <div>
+        Se proyecta la coordenada recibida sobre el punto más cercano de la pista predefinida
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-calculator text-2xl">
+        </i>
+       </div>
+       <div>
+        Se calculan métricas en tiempo real: distancia recorrida, velocidad instantánea y ranking
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-sync text-2xl">
+        </i>
+       </div>
+       <div>
+        Los datos se envían inmediatamente a la interfaz web para visualización
+       </div>
+      </div>
+      <div class="mt-auto">
+       <h3 class="text-xl font-semibold mb-2">
+        Comunicación con Frontend
+       </h3>
+       <div class="point-item">
+        <div class="point-icon">
+         <i class="fas fa-exchange-alt text-2xl">
+         </i>
+        </div>
+        <div>
+         Actualización inmediata de posiciones en el mapa
+        </div>
+       </div>
+       <div class="point-item">
+        <div class="point-icon">
+         <i class="fas fa-chart-line text-2xl">
+         </i>
+        </div>
+        <div>
+         Gráficos de velocidad y posición actualizados
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Right Column -->
+    <div class="w-1/2 pl-6">
+     <div class="content-box h-full flex flex-col">
+      <h3 class="text-xl font-semibold mb-4">
+       Visualización y Cálculos
+      </h3>
+      <!-- D3.js visualization area -->
+      <div class="flex-1 relative" id="track-visualization"></div>
+      <div class="mt-4">
+       <div class="grid grid-cols-2 gap-4">
+        <div class="bg-gray-800 p-3 rounded">
+         <div class="flex items-center mb-2">
+          <i class="fas fa-route text-green-400 mr-2">
+          </i>
+          <span class="font-semibold">
+           Distancia Recorrida
+          </span>
+         </div>
+         <p class="text-sm text-gray-300">
+          Acumulada en tiempo real según proyección sobre la pista
+         </p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded">
+         <div class="flex items-center mb-2">
+          <i class="fas fa-tachometer-alt text-blue-400 mr-2">
+          </i>
+          <span class="font-semibold">
+           Velocidad Instantánea
+          </span>
+         </div>
+         <p class="text-sm text-gray-300">
+          Basada en la distancia y tiempo entre posiciones consecutivas
+         </p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded">
+         <div class="flex items-center mb-2">
+          <i class="fas fa-trophy text-yellow-400 mr-2">
+          </i>
+          <span class="font-semibold">
+           Ranking
+          </span>
+         </div>
+         <p class="text-sm text-gray-300">
+          Ordenamiento en tiempo real según distancia recorrida
+         </p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded">
+         <div class="flex items-center mb-2">
+          <i class="fas fa-project-diagram text-purple-400 mr-2">
+          </i>
+          <span class="font-semibold">
+           Proyección
+          </span>
+         </div>
+         <p class="text-sm text-gray-300">
+          Asignación de posición correcta en la pista incluso con desvíos
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   // D3.js visualization for track and GPS point projection
+        const visualizationContainer = d3.select("#track-visualization");
+        const width = visualizationContainer.node().getBoundingClientRect().width;
+        const height = visualizationContainer.node().getBoundingClientRect().height;
+        
+        const svg = visualizationContainer.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+            
+        // Create a simple race track shape
+        const trackPath = [
+            {x: 100, y: 100},
+            {x: 200, y: 50},
+            {x: 300, y: 150},
+            {x: 400, y: 80},
+            {x: 500, y: 180},
+            {x: 600, y: 100},
+            {x: 700, y: 150},
+            {x: 800, y: 80},
+            {x: 900, y: 120}
+        ];
+        
+        // Draw the track
+        const lineGenerator = d3.line()
+            .x(d => d.x)
+            .y(d => d.y)
+            .curve(d3.curveCardinal);
+            
+        svg.append("path")
+            .attr("d", lineGenerator(trackPath))
+            .attr("stroke", "#4CAF50")
+            .attr("stroke-width", 15)
+            .attr("fill", "none")
+            .attr("opacity", 0.5);
+            
+        // Add track points
+        svg.selectAll(".track-point")
+            .data(trackPath)
+            .enter()
+            .append("circle")
+            .attr("class", "track-point")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", 4);
+            
+        // Add a GPS point (random position that will be projected)
+        const gpsPoint = {x: 250, y: 120};
+        
+        svg.append("circle")
+            .attr("class", "gps-point")
+            .attr("cx", gpsPoint.x)
+            .attr("cy", gpsPoint.y)
+            .attr("r", 6)
+            .attr("filter", "drop-shadow(0 0 8px rgba(255, 87, 34, 0.8))");
+            
+        // Find the closest point on the track (simplified calculation)
+        const closestPoint = trackPath.reduce((prev, curr) => {
+            const prevDist = Math.sqrt(Math.pow(prev.x - gpsPoint.x, 2) + Math.pow(prev.y - gpsPoint.y, 2));
+            const currDist = Math.sqrt(Math.pow(curr.x - gpsPoint.x, 2) + Math.pow(curr.y - gpsPoint.y, 2));
+            return (prevDist < currDist ? prev : curr);
+        });
+        
+        // Add projection line
+        svg.append("line")
+            .attr("class", "projection-line")
+            .attr("x1", gpsPoint.x)
+            .attr("y1", gpsPoint.y)
+            .attr("x2", closestPoint.x)
+            .attr("y2", closestPoint.y);
+            
+        // Add labels
+        svg.append("text")
+            .attr("x", 50)
+            .attr("y", 30)
+            .attr("fill", "white")
+            .attr("font-size", "16px")
+            .text("Proyección de coordenadas GPS sobre la pista");
+            
+        svg.append("text")
+            .attr("x", gpsPoint.x + 10)
+            .attr("y", gpsPoint.y - 10)
+            .attr("fill", "#FF5722")
+            .attr("font-size", "12px")
+            .text("Coordenada GPS");
+            
+        svg.append("text")
+            .attr("x", closestPoint.x + 10)
+            .attr("y", closestPoint.y - 10)
+            .attr("fill", "#4CAF50")
+            .attr("font-size", "12px")
+            .text("Proyección");
+            
+        // Add calculation icons
+        const calculations = [
+            {icon: "fa-route", color: "#4CAF50", x: 650, y: 200},
+            {icon: "fa-tachometer-alt", color: "#2196F3", x: 750, y: 200},
+            {icon: "fa-trophy", color: "#FFC107", x: 850, y: 200}
+        ];
+        
+        calculations.forEach(calc => {
+            svg.append("foreignObject")
+                .attr("x", calc.x - 15)
+                .attr("y", calc.y - 15)
+                .attr("width", 30)
+                .attr("height", 30)
+                .html(`<i class="fas ${calc.icon}" style="color: ${calc.color}; font-size: 20px;"></i>`);
+        });
+  </script>
+ 
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

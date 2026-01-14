@@ -1,0 +1,19 @@
+{
+  "name": "race-sim",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simulador de carrera geográfica con WebSocket + Leaflet",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test:quick": "node quicktest.js",
+    "example": "node example.js"
+  },
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
+

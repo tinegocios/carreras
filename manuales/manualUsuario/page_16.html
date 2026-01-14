@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Flujo Completo de Operación
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: #BDBDBD;
+        }
+        .step-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 30px;
+            height: 30px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step-icon {
+            margin-right: 15px;
+            color: #4CAF50;
+        }
+        .step-connector {
+            position: absolute;
+            left: 50%;
+            bottom: -20px;
+            height: 20px;
+            width: 2px;
+            background-color: #4CAF50;
+        }
+        .verification-badge {
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.8em;
+            color: #4CAF50;
+        }
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-2{margin-bottom:0.5rem}.mr-4{margin-right:1rem}.mt-6{margin-top:1.5rem}.mt-auto{margin-top:auto}.flex{display:flex}.grid{display:grid}.flex-1{flex:1 1 0%}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.gap-4{gap:1rem}.rounded-lg{border-radius:0.5rem}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.p-12{padding:3rem}.p-4{padding:1rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-semibold{font-weight:600}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-12 flex flex-col">
+   <!-- Title -->
+   <div class="title">
+    Flujo Completo de Operación
+   </div>
+   <!-- Subtitle -->
+   <div class="subtitle">
+    Lista secuencial desde encendido de hardware hasta visualización web incluyendo verificación de conexiones y fixes RTK
+   </div>
+   <!-- Main Content -->
+   <div class="flex-1 grid grid-cols-4 gap-4">
+    <!-- Step 1 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      1
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-power-off">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Encender Base RTK
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Asegúrate de que la base Mosaic X5 esté encendida y configurada para transmitir correcciones al Caster NTRIP.
+     </p>
+     <div class="step-connector">
+     </div>
+    </div>
+    <!-- Step 2 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      2
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-power-off">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Encender Rover
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Conecte la alimentación al módulo Ardusimple simpleRTK2B y al 4G NTRIP Master.
+     </p>
+     <div class="step-connector">
+     </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      3
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-signal">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Verificar Conexión 4G
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Observe los LEDs del 4G NTRIP Master para confirmar que ha establecido una conexión exitosa a la red celular.
+     </p>
+     <div class="verification-badge mt-auto">
+      Verificación
+     </div>
+    </div>
+    <!-- Step 4 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      4
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-satellite">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Confirmar RTK Fix
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Espere a que el rover adquiera un &#34;RTK Fix&#34;. Esto suele indicarse mediante un LED específico (verde) en la placa simpleRTK2B.
+     </p>
+     <div class="verification-badge mt-auto">
+      Verificación
+     </div>
+    </div>
+    <!-- Step 5 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      5
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-server">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Iniciar Servidor Python
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Ejecute el script Python que se encarga de recibir los datos NMEA del rover, autenticarlos y enviarlos al backend de Node.js.
+     </p>
+    </div>
+    <!-- Step 6 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      6
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-code">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Iniciar Backend Node.js
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Active el servidor Node.js, que gestionará la lógica de la aplicación, el procesamiento de posiciones y la comunicación con la interfaz web.
+     </p>
+    </div>
+    <!-- Step 7 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      7
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-globe">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Abrir Interfaz Web
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      Acceda a la URL de la aplicación web desde un dispositivo con conexión a internet.
+     </p>
+    </div>
+    <!-- Step 8 -->
+    <div class="step-box flex flex-col">
+     <div class="step-number">
+      8
+     </div>
+     <div class="flex items-center mb-2">
+      <div class="step-icon text-3xl">
+       <i class="fas fa-toggle-on">
+       </i>
+      </div>
+      <h3 class="font-semibold">
+       Seleccionar Modo Real
+      </h3>
+     </div>
+     <p class="text-sm text-gray-300">
+      En la interfaz web, elija la opción &#34;Seguimiento Real&#34; para comenzar a visualizar las posiciones en tiempo real.
+     </p>
+    </div>
+   </div>
+   <!-- Final Step -->
+   <div class="mt-6 flex justify-center">
+    <div class="bg-gray-800 p-4 rounded-lg flex items-center">
+     <div class="text-3xl text-green-400 mr-4">
+      <i class="fas fa-map-marked-alt">
+      </i>
+     </div>
+     <div>
+      <h3 class="font-semibold text-xl">
+       Visualización Web
+      </h3>
+      <p class="text-sm text-gray-300">
+       Una vez completados los pasos anteriores, podrá ver el seguimiento en tiempo real de los competidores en la interfaz web.
+      </p>
+     </div>
+    </div>
+   </div>
+  </div>
+ 
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

@@ -1,0 +1,32 @@
+Configuración general del proyecto:
+
+Sigue las siguientes instrucciones:
+
+1.- Debes revisar al inicio de cada sesión el archivo de reporte técnico inicial y especificaciones generales en la carpeta /generales para tener el contexto correcto de este proyecto.
+
+2.- Luego debes leer el archivo ruta_desarrollo.txt para saber cual es el plan de implementación paso a paso.
+
+3.- Luego debes revisar el historíal de sesiones y cambios de este archivo para ponerte al día de las ultimas sesiones implementadas y el punto en el que se está trabajando
+
+4.- Aun con el historial en mente, al inicio de cada sesión debes hacer un escaneo general del sistema en /carreras para verificar si el historial coincide con el desarrollo implementado al momento. Si hay diferencias o cosas no documentadas, debe colocarse en este historial al inicio de la sesión.
+
+5.- Una vez que hallaz realizado las tareas anteriores, responde con "Listo para iniciar, indicame fecha y hora iniciales." y espera las indicaciones para inicar el trabajo de la sesión actual.
+
+6.- Cada vez que hagamos un cambio o implementemos una nueva funcionalidad, debes recordar agregar una actualización a este archivo para indicar los cambios realizados y en que momento se hicieron los cambios colocando un formato de fecha / Hora : cambios realizados...
+
+Entorno de trabajo:
+- Estamos operando en un servidor de desarrollo, por lo que desde esta terminal pueden ejecutarse comandos de consola, correr pruebas, aplicar migraciones y otras utilidades que se requieran.
+
+Con respecto de la ruta de desarrollo, debes ser critico con ella, ya que puede que halla cosas que sea necesario definir o ajustar, por lo que me gustaría que si es el caso, me preguntes al respecto las dudas antes de implementar y una vez decidido te daré la indicación de que ejecutar.
+
+----------------------------------
+Historico de sesiones y cambios
+----------------------------------
+2025/10/10 13:55 : Se agregan scripts auxiliares en ___scriptsrtk/generales (recibe/envia) para capturar y enviar tramas NMEA via WebSocket, generando logs localmente para pruebas previas al dispositivo real.
+2025/10/10 13:58 : Ajustado receptor `recibe` para escuchar en puerto 4040 por defecto.
+2025/10/10 14:05 : `serial-xsimple.py` ahora reenvía tramas GGA del puerto serie directamente al WebSocket (puerto 4040) con reconexión automática.
+2025/10/10 14:15 : Añadido soporte para `?id=` en la URL de conexión (scripts `recibe`, `envia`, `serial-xsimple.py`) para identificar cada GPS.
+2025/10/10 14:20 : `envia` y `serial-xsimple.py` asignan id=0001 por defecto (parametrizable por CLI). `serial-xsimple.py` y `envia` apuntan por defecto a wss://port-3030-tako-ruizestebans650023.codeanyapp.com/nmea.
+2025/10/10 14:45 : Servidor en /carreras recibe tramas NMEA vía WS `/nmea`, convierte a payload GPS, y registra log crudo→payload en logs/nmea.log.
+2025/10/10 14:55 : Se creó carpeta ___scriptsrtk/carreras/logs para persistir el log nmea.
+2025/10/15 17:10 : Se añadió franja visual de rebases en el frontend (`public/index.html`, `styles.css`, `app.js`) con fichas animadas vía FLIP para representar orden de corredores sobre el mapa.

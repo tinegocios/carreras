@@ -1,0 +1,92 @@
+#!/usr/bin/env node
+
+function parseArgs(argv) {
+  const out = { interval: 1000 };
+  for (let i = 2; i < argv.length; i++) {
+    const flag = argv[i];
+    if (flag === '--url') out.url = argv[++i];
+    else if (flag === '--file') out.file = argv[++i];
+    else if (flag === '--message') out.message = argv[++i];
+    else if (flag === '--interval') out.interval = parseInt(argv[++i], 10);
+    else if (flag === '--id') out.id = argv[++i];
+    else if (flag === '--device-id') out.deviceId = argv[++i];
+    else if (flag === '--help' || flag === '-h') out.help = true;
+  }
+  return out;
+}
+
+function ensureWs() {
+  try {
+    return require('ws');
+  } catch (err) {
+    console.error('Dependencia "ws" no encontrada. Instala con: npm install ws');
+    process.exit(1);
+  }
+}
+
+const fs = require('fs');
+const path = require('path');
+
+function appendDeviceId(url, deviceId) {
+  const finalId = deviceId || '0001';
+  const hasQuery = url.includes('?');
+  const sep = hasQuery ? '&' : '?';
+  return `${url}${sep}id=${encodeURIComponent(finalId)}`;
+}
+
+const args = parseArgs(process.argv);
+if (args.help || !args.url || (!args.file && !args.message)) {
+  console.log('Uso: ./envia --url wss://port-3030-tako-ruizestebans650023.codeanyapp.com/nmea --file ./tramas.txt [--interval 1000] [--id prefijo] [--device-id 0001]');
+  console.log('   o: ./envia --url wss://port-3030-tako-ruizestebans650023.codeanyapp.com/nmea --message "$GPGGA,..."');
+  process.exit(args.help ? 0 : 1);
+}
+
+if (!Number.isFinite(args.interval) || args.interval <= 0) {
+  console.error('Intervalo inválido. Usa --interval <ms>');
+  process.exit(1);
+}
+
+let queue = [];
+if (args.file) {
+  const raw = fs.readFileSync(path.resolve(args.file), 'utf8');
+  queue = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (queue.length === 0) {
+    console.error('El archivo no contiene líneas válidas.');
+    process.exit(1);
+  }
+} else {
+  queue = [args.message];
+}
+
+const WebSocket = ensureWs();
+const targetUrl = appendDeviceId(args.url, args.deviceId || args.id);
+const ws = new WebSocket(targetUrl, { rejectUnauthorized: false });
+
+ws.on('open', () => {
+  console.log(`Conectado a ${targetUrl}. Enviando ${queue.length} mensajes cada ${args.interval} ms.`);
+  let idx = 0;
+  const sendNext = () => {
+    if (idx >= queue.length) {
+      console.log('Mensajes enviados. Cerrando conexión.');
+      ws.close();
+      return;
+    }
+    const payload = queue[idx++];
+    const env = args.id ? `${args.id} ${payload}` : payload;
+    ws.send(env, (err) => {
+      if (err) console.error(`Error al enviar: ${err.message}`);
+      else console.log(`Enviado (${idx}/${queue.length}): ${env}`);
+      setTimeout(sendNext, args.interval);
+    });
+  };
+  sendNext();
+});
+
+ws.on('error', (err) => {
+  console.error(`Error WS: ${err.message}`);
+  process.exit(1);
+});
+
+ws.on('close', () => {
+  console.log('Conexión cerrada.');
+});

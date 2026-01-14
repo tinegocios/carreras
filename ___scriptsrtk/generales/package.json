@@ -1,0 +1,13 @@
+{
+  "name": "gps-utils",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Herramientas auxiliares para pruebas de NMEA por WebSocket.",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "scripts": {
+    "recibe": "./recibe",
+    "envia": "./envia"
+  }
+}

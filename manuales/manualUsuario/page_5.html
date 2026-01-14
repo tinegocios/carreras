@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Alimentación Eléctrica del Prototipo
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; overflow: hidden; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #BDBDBD;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .point-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .point-icon {
+            margin-right: 15px;
+            color: #4CAF50;
+            flex-shrink: 0;
+        }
+        .warning-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .warning-icon {
+            margin-right: 10px;
+            color: #FFC107;
+            flex-shrink: 0;
+        }
+        .circuit-element {
+            stroke: #4CAF50;
+            stroke-width: 2;
+            fill: none;
+        }
+        .circuit-text {
+            fill: white;
+            font-size: 14px;
+            text-anchor: middle;
+        }
+        .circuit-node {
+            fill: #4CAF50;
+        }
+    
+html {
+    overflow: hidden;
+}
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.my-4{margin-top:1rem;margin-bottom:1rem}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mr-3{margin-right:0.75rem}.mt-4{margin-top:1rem}.flex{display:flex}.h-40{height:10rem}.h-full{height:100%}.w-1\/2{width:50%}.w-full{width:100%}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.rounded-lg{border-radius:0.5rem}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.p-12{padding:3rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-semibold{font-weight:600}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.my-4{margin-top:1rem;margin-bottom:1rem}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mr-3{margin-right:0.75rem}.mt-4{margin-top:1rem}.flex{display:flex}.h-40{height:10rem}.h-full{height:100%}.w-1\/2{width:50%}.w-full{width:100%}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.rounded-lg{border-radius:0.5rem}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.p-12{padding:3rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-semibold{font-weight:600}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-12 flex flex-col" style=" overflow: hidden;">
+   <!-- Title -->
+   <div class="title">
+    Alimentación Eléctrica del Prototipo
+   </div>
+   <!-- Subtitle -->
+   <div class="subtitle">
+    Sistema de energía con batería ion-litio 9V y regulador estable para garantizar operación confiable de módulos GNSS
+   </div>
+   <!-- Main Content -->
+   <div class="flex flex-1">
+    <!-- Left Column -->
+    <div class="w-1/2 pr-6">
+     <div class="content-box h-full flex flex-col" style="transition: none;">
+      <h3 class="text-xl font-semibold mb-3">
+       Diseño del Circuito
+      </h3>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-battery-full text-2xl">
+        </i>
+       </div>
+       <div>
+        <span class="font-semibold">
+         Batería de Ion de Litio de 9V:
+        </span>
+        Fuente de energía principal
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon">
+        <i class="fas fa-sliders-h text-2xl">
+        </i>
+       </div>
+       <div style="transition: none;" class="">
+        <span class="font-semibold">
+         Regulador de Voltaje:
+        </span>
+        Transforma 9V a 3.6V o 5V según requerimientos (El equipo de Ntrip Micro solo tolera rangos de 3.3v a 3.6v, por lo que la alternativa es o usar una lineas común a 3.6v o usar 2 lineas independientes, una para en ntrip y una de 5v para el 4G)</div>
+      </div>
+      <div class="my-4">
+       <div class="w-full h-40" id="power-circuit"></div>
+      </div>
+     </div>
+    </div>
+    <!-- Right Column -->
+    <div class="w-1/2 pl-6">
+     <div class="content-box h-full flex flex-col">
+      <h3 class="text-xl font-semibold mb-3">
+       Importancia de la Estabilidad
+      </h3>
+      <p class="text-gray-300 mb-3">
+       Los módulos GNSS son extremadamente sensibles a las variaciones en el suministro eléctrico:
+      </p>
+      <div class="warning-item">
+       <div class="warning-icon">
+        <i class="fas fa-times-circle text-xl">
+        </i>
+       </div>
+       <div>
+        <span class="font-semibold text-red-400">
+         Pérdida de &#34;fix&#34;
+        </span>
+        : El receptor pierde la capacidad de calcular una posición precisa
+       </div>
+      </div>
+      <div class="warning-item">
+       <div class="warning-icon">
+        <i class="fas fa-times-circle text-xl">
+        </i>
+       </div>
+       <div>
+        <span class="font-semibold text-red-400">
+         Reinicios inesperados
+        </span>
+        : Los módulos pueden apagarse y encenderse
+       </div>
+      </div>
+      <div class="warning-item">
+       <div class="warning-icon">
+        <i class="fas fa-times-circle text-xl">
+        </i>
+       </div>
+       <div>
+        <span class="font-semibold text-red-400">
+         Errores en el cálculo
+        </span>
+        : Fluctuaciones de voltaje introducen ruido
+       </div>
+      </div>
+      <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+       <div class="flex items-center justify-center mb-1">
+        <i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mr-3">
+        </i>
+        <span class="text-lg font-semibold">
+         Mantenimiento esencial
+        </span>
+       </div>
+       <p class="text-center text-gray-300">
+        &#34;Mantener voltaje y corriente estables garantiza la fiabilidad y precisión del posicionamiento RTK.&#34;
+       </p>
+      </div>
+      <div class="mt-4">
+       <div class="flex justify-center items-center space-x-6 p-2">
+        <div class="text-center">
+         <i class="fas fa-battery-three-quarters text-green-400 text-2xl mb-1">
+         </i>
+         <div class="text-sm">
+          Nivel óptimo
+         </div>
+        </div>
+        <div class="text-center">
+         <i class="fas fa-battery-half text-yellow-400 text-2xl mb-1">
+         </i>
+         <div class="text-sm">
+          Nivel medio
+         </div>
+        </div>
+        <div class="text-center">
+         <i class="fas fa-battery-quarter text-red-400 text-2xl mb-1">
+         </i>
+         <div class="text-sm">
+          Nivel crítico
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   // D3.js visualization for power circuit
+        const circuitContainer = d3.select("#power-circuit");
+        const width = circuitContainer.node().getBoundingClientRect().width;
+        const height = circuitContainer.node().getBoundingClientRect().height;
+        
+        const svg = circuitContainer.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        // Draw battery
+        svg.append("rect")
+            .attr("x", 50)
+            .attr("y", 20)
+            .attr("width", 60)
+            .attr("height", 40)
+            .attr("rx", 5)
+            .attr("class", "circuit-element");
+            
+        svg.append("rect")
+            .attr("x", 45)
+            .attr("y", 35)
+            .attr("width", 8)
+            .attr("height", 10)
+            .attr("class", "circuit-element");
+            
+        // Battery label
+        svg.append("text")
+            .attr("x", 80)
+            .attr("y", 45)
+            .attr("class", "circuit-text")
+            .text("9V");
+            
+        // Draw wire to regulator
+        svg.append("line")
+            .attr("x1", 110)
+            .attr("y1", 40)
+            .attr("x2", 170)
+            .attr("y2", 40)
+            .attr("class", "circuit-element");
+            
+        // Draw regulator
+        svg.append("rect")
+            .attr("x", 170)
+            .attr("y", 25)
+            .attr("width", 60)
+            .attr("height", 30)
+            .attr("class", "circuit-element");
+            
+        // Regulator label
+        svg.append("text")
+            .attr("x", 200)
+            .attr("y", 45)
+            .attr("class", "circuit-text")
+            .text("Regulador");
+            
+        // Draw wire to modules
+        svg.append("line")
+            .attr("x1", 230)
+            .attr("y1", 40)
+            .attr("x2", 290)
+            .attr("y2", 40)
+            .attr("class", "circuit-element");
+            
+        // Draw modules
+        svg.append("rect")
+            .attr("x", 290)
+            .attr("y", 15)
+            .attr("width", 60)
+            .attr("height", 25)
+            .attr("class", "circuit-element");
+            
+        svg.append("rect")
+            .attr("x", 290)
+            .attr("y", 50)
+            .attr("width", 60)
+            .attr("height", 25)
+            .attr("class", "circuit-element");
+            
+        // Modules labels
+        svg.append("text")
+            .attr("x", 320)
+            .attr("y", 30)
+            .attr("class", "circuit-text")
+            .text("GNSS");
+            
+        svg.append("text")
+            .attr("x", 320)
+            .attr("y", 65)
+            .attr("class", "circuit-text")
+            .text("Módulos");
+            
+        // Draw output wire
+        svg.append("line")
+            .attr("x1", 350)
+            .attr("y1", 40)
+            .attr("x2", 410)
+            .attr("y2", 40)
+            .attr("class", "circuit-element");
+            
+        // Draw output label
+        svg.append("text")
+            .attr("x", 380)
+            .attr("y", 25)
+            .attr("class", "circuit-text")
+            .text("3.6V/5V");
+            
+        // Draw ground wires
+        svg.append("line")
+            .attr("x1", 80)
+            .attr("y1", 60)
+            .attr("x2", 80)
+            .attr("y2", 80)
+            .attr("class", "circuit-element");
+            
+        svg.append("line")
+            .attr("x1", 200)
+            .attr("y1", 55)
+            .attr("x2", 200)
+            .attr("y2", 80)
+            .attr("class", "circuit-element");
+            
+        svg.append("line")
+            .attr("x1", 320)
+            .attr("y1", 75)
+            .attr("x2", 320)
+            .attr("y2", 80)
+            .attr("class", "circuit-element");
+            
+        // Draw ground symbols
+        svg.append("path")
+            .attr("d", "M75,80 L90,80 L82,88 L75,80 Z")
+            .attr("class", "circuit-element");
+            
+        svg.append("path")
+            .attr("d", "M195,80 L210,80 L202,88 L195,80 Z")
+            .attr("class", "circuit-element");
+            
+        svg.append("path")
+            .attr("d", "M315,80 L330,80 L322,88 L315,80 Z")
+            .attr("class", "circuit-element");
+            
+        // Add title for the circuit
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", height - 10)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#BDBDBD")
+            .attr("font-size", "16px")
+            .text("Circuito de alimentación estable");
+  </script>
+ 
+
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

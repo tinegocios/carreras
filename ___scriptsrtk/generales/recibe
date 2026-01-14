@@ -1,0 +1,96 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const { URL } = require('url');
+
+function parseArgs(argv) {
+  const out = { port: 4040, host: '0.0.0.0' };
+  for (let i = 2; i < argv.length; i++) {
+    const flag = argv[i];
+    if (flag === '--port') out.port = parseInt(argv[++i], 10);
+    else if (flag === '--host') out.host = argv[++i];
+    else if (flag === '--log') out.log = argv[++i];
+    else if (flag === '--help' || flag === '-h') out.help = true;
+  }
+  return out;
+}
+
+function ensureWs() {
+  try {
+    return require('ws');
+  } catch (err) {
+    console.error('Dependencia "ws" no encontrada. Instala con: npm install ws');
+    process.exit(1);
+  }
+}
+
+const args = parseArgs(process.argv);
+if (args.help) {
+  console.log('Uso: ./recibe [--port 3030] [--host 0.0.0.0] [--log ./logs/captura.log]');
+  process.exit(0);
+}
+
+if (!Number.isFinite(args.port) || args.port <= 0) {
+  console.error('Puerto inválido. Usa --port <numero>');
+  process.exit(1);
+}
+
+const defaultName = `captura-${new Date().toISOString().replace(/[:.]/g, '-')}.log`;
+const targetLog = args.log
+  ? path.resolve(process.cwd(), args.log)
+  : path.join(__dirname, 'logs', defaultName);
+fs.mkdirSync(path.dirname(targetLog), { recursive: true });
+
+const WebSocketLib = ensureWs();
+const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('ok');
+    return;
+  }
+  res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+  res.end('not found');
+});
+
+const wss = new WebSocketLib.Server({ server });
+console.log(`Escuchando WebSocket en ws://${args.host}:${args.port} (log: ${targetLog})`);
+
+wss.on('connection', (socket, req) => {
+  const ip = req.socket?.remoteAddress || 'desconocido';
+  let deviceId = 'sin-id';
+  try {
+    const fullUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+    const qpId = fullUrl.searchParams.get('id');
+    if (qpId) deviceId = qpId;
+  } catch (err) {
+    console.error(`No se pudo parsear la URL de conexión: ${err.message}`);
+  }
+  console.log(`Conexión entrante de ${ip} (id=${deviceId})`);
+  socket.on('message', (raw) => {
+    const payload = Buffer.isBuffer(raw) ? raw.toString('utf8') : String(raw);
+    const line = `${new Date().toISOString()} ${ip} ${deviceId} ${payload}\n`;
+    try {
+      fs.appendFileSync(targetLog, line, 'utf8');
+    } catch (err) {
+      console.error(`No se pudo escribir en el log: ${err.message}`);
+    }
+  });
+  socket.on('close', () => console.log(`Conexión cerrada: ${ip}`));
+  socket.on('error', (err) => console.error(`Error WS desde ${ip}: ${err.message}`));
+});
+
+server.on('clientError', (err, socket) => {
+  console.error(`Error HTTP: ${err.message}`);
+  socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+});
+
+server.listen(args.port, args.host, () => {
+  console.log(`Servidor HTTP listo en http://${args.host}:${args.port}/health`);
+});
+
+process.on('SIGINT', () => {
+  console.log('Recibido SIGINT, cerrando...');
+  server.close(() => process.exit(0));
+});

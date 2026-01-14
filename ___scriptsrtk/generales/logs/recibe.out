@@ -1,0 +1,4 @@
+nohup: ignoring input
+Escuchando WebSocket en ws://0.0.0.0:4040 (log: /home/cabox/workspace/___scriptsrtk/generales/logs/gps.log)
+Servidor HTTP listo en http://0.0.0.0:4040/health
+Conexión entrante de 142.202.48.16 (id=0001)

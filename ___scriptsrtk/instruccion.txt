@@ -1,0 +1,15 @@
+Ahora, lo primero que vamos a hacer el día de hoy es que necesito que vayas y examines la interfaz de frontend que representa la carrera.
+
+En esa interfaz, vamos a poner en la parte del mapa, en la parte inferior, en una franja de unos 100 píxeles, una representación gráfica de todos los jugadores que estén jugando la carrera en ese momento, colocando hacia la izquierda los que están en primera posición y de ahí hacia la derecha, el que está en segundo, tercero, cuarto, etc.
+
+¿Qué es lo que busco? Que haya una animación en donde se vean los rebases, pero de una manera visual.
+
+Quisiera que esto estuviera de alguna manera pensado para no tener rebases como automáticos, o como que la percepción visual sea de que las fichas se cambian de lugar rápidamente o de manera instantánea, sino que se vean esas transiciones.
+
+Creo que hay un poco el tema es que lo intenta con Vue.js, pero Vue.js lo cambia de manera inmediata y creo que debería estar tal vez despegado en alguna función de animación adicional, donde Vue.js le vaya indicando qué posición deberían tener, y entonces esa función de animación trata de hacer esos cambios.
+
+¿Eso por qué? Porque de repente, tal vez en un rebase de segundo lugar hacia primer lugar, pues deberían moverse las fichas, pero después alguien más rebasa y se debe notar esa transición.
+
+Yo creo que para que pueda haber una transición bastante clara, todas las transiciones deberán hacerse planteando que un cambio de posición se ejecute de cualquier posición hacia cualquier posición en unos 200 milisegundos, tomando esos puntos intermedios de transiciones.
+
+Me gustaría que antes de que hagas cualquier cambio en el código, me des una propuesta de cómo debería funcionar, en base a lo que revises que ya está en el frontend. Todavía no hagan ningún cambio; solamente quiero ver cómo lo aplicarías. 

@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Procesador de Posiciones (Node.js)
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: #BDBDBD;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .mode-box {
+            border-radius: 8px;
+            padding: 15px;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+        .mode-box:hover {
+            transform: translateY(-5px);
+        }
+        .point-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .point-icon {
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .nodejs-logo {
+            color: #438535;
+        }
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mr-3{margin-right:0.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.h-full{height:100%}.w-1\/2{width:50%}.w-1\/3{width:33.333333%}.w-2\/3{width:66.666667%}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-around{justify-content:space-around}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.border{border-width:1px}.border-blue-700{--tw-border-opacity:1;border-color:rgb(29 78 216 / var(--tw-border-opacity, 1))}.border-green-700{--tw-border-opacity:1;border-color:rgb(21 128 61 / var(--tw-border-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-opacity-50{--tw-bg-opacity:0.5}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.from-blue-900{--tw-gradient-from:#1e3a8a var(--tw-gradient-from-position);--tw-gradient-to:rgb(30 58 138 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-green-900{--tw-gradient-from:#14532d var(--tw-gradient-from-position);--tw-gradient-to:rgb(20 83 45 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-blue-800{--tw-gradient-to:#1e40af var(--tw-gradient-to-position)}.to-green-800{--tw-gradient-to:#166534 var(--tw-gradient-to-position)}.p-12{padding:3rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-semibold{font-weight:600}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-12 flex flex-col">
+   <!-- Title -->
+   <div class="title">
+    Procesador de Posiciones (Node.js)
+   </div>
+   <!-- Subtitle -->
+   <div class="subtitle">
+    Backend principal que gestiona lógica de carreras diferenciando entre modos de simulación virtual y seguimiento real
+   </div>
+   <!-- Main Content -->
+   <div class="flex flex-1 gap-6">
+    <!-- Left Column - Role Description -->
+    <div class="w-1/3">
+     <div class="content-box h-full flex flex-col">
+      <div class="flex items-center mb-4">
+       <i class="fab fa-node-js text-3xl nodejs-logo mr-3">
+       </i>
+       <h3 class="text-xl font-semibold">
+        Rol del Backend
+       </h3>
+      </div>
+      <div class="point-item">
+       <div class="point-icon text-blue-400">
+        <i class="fas fa-brain">
+        </i>
+       </div>
+       <div>
+        Gestiona la lógica completa de la carrera
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon text-green-400">
+        <i class="fas fa-location-dot">
+        </i>
+       </div>
+       <div>
+        Procesa posiciones recibidas (reales o simuladas)
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon text-purple-400">
+        <i class="fas fa-clock">
+        </i>
+       </div>
+       <div>
+        Comunicación en tiempo real a interfaces web
+       </div>
+      </div>
+      <div class="point-item">
+       <div class="point-icon text-yellow-400">
+        <i class="fas fa-code-branch">
+        </i>
+       </div>
+       <div>
+        Adaptación a diferentes necesidades de salida
+       </div>
+      </div>
+      <div class="mt-auto">
+       <div class="bg-gray-800 p-3 rounded-lg">
+        <div class="text-center text-sm text-gray-400 mb-2">
+         Estructura de Datos Procesadas
+        </div>
+        <div class="bg-gray-700 p-2 rounded text-xs font-mono">
+         {
+         <br/>
+         &#34;competidor&#34;: &#34;string&#34;,
+         <br/>
+         &#34;latitud&#34;: &#34;number&#34;,
+         <br/>
+         &#34;longitud&#34;: &#34;number&#34;,
+         <br/>
+         &#34;velocidad&#34;: &#34;number&#34;,
+         <br/>
+         &#34;timestamp&#34;: &#34;Date&#34;
+         <br/>
+         }
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Right Column - Modes Comparison -->
+    <div class="w-2/3">
+     <div class="flex h-full gap-4">
+      <!-- Simulation Mode -->
+      <div class="w-1/2">
+       <div class="mode-box bg-gradient-to-b from-blue-900 to-blue-800 bg-opacity-30 border border-blue-700">
+        <div class="flex items-center justify-center mb-4">
+         <i class="fas fa-laptop-code text-3xl text-blue-400 mr-3">
+         </i>
+         <h3 class="text-xl font-semibold">
+          Modo Simulación
+         </h3>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-blue-400">
+          <i class="fas fa-route">
+          </i>
+         </div>
+         <div>
+          Genera datos sintéticos pero realistas
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-blue-400">
+          <i class="fas fa-map">
+          </i>
+         </div>
+         <div>
+          Utiliza pistas GPS predefinidas
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-blue-400">
+          <i class="fas fa-random">
+          </i>
+         </div>
+         <div>
+          Avance variable con aleatoriedad
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-blue-400">
+          <i class="fas fa-broadcast-tower">
+          </i>
+         </div>
+         <div>
+          Emite eventos &#34;tick&#34; y &#34;end&#34;
+         </div>
+        </div>
+        <div class="mt-4 bg-gray-800 bg-opacity-50 p-3 rounded-lg">
+         <div class="text-center text-sm text-gray-400 mb-1">
+          Aplicaciones Prácticas
+         </div>
+         <div class="flex justify-around text-center">
+          <div class="px-2">
+           <i class="fas fa-code text-blue-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            Desarrollo
+           </span>
+          </div>
+          <div class="px-2">
+           <i class="fas fa-bug text-blue-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            Depuración
+           </span>
+          </div>
+          <div class="px-2">
+           <i class="fas fa-user text-blue-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            Capacitación
+           </span>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <!-- Real Mode -->
+      <div class="w-1/2">
+       <div class="mode-box bg-gradient-to-b from-green-900 to-green-800 bg-opacity-30 border border-green-700">
+        <div class="flex items-center justify-center mb-4">
+         <i class="fas fa-satellite-dish text-3xl text-green-400 mr-3">
+         </i>
+         <h3 class="text-xl font-semibold">
+          Modo Real
+         </h3>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-green-400">
+          <i class="fas fa-server">
+          </i>
+         </div>
+         <div>
+          Procesa coordenadas reales del rover
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-green-400">
+          <i class="fas fa-project-diagram">
+          </i>
+         </div>
+         <div>
+          Proyección sobre pista predefinida
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-green-400">
+          <i class="fas fa-calculator">
+          </i>
+         </div>
+         <div>
+          Cálculos en tiempo real (distancia, velocidad)
+         </div>
+        </div>
+        <div class="point-item">
+         <div class="point-icon text-green-400">
+          <i class="fas fa-trophy">
+          </i>
+         </div>
+         <div>
+          Actualización ranking en vivo
+         </div>
+        </div>
+        <div class="mt-4 bg-gray-800 bg-opacity-50 p-3 rounded-lg">
+         <div class="text-center text-sm text-gray-400 mb-1">
+          Orígenes de Datos
+         </div>
+         <div class="flex justify-around text-center">
+          <div class="px-2">
+           <i class="fas fa-globe text-green-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            HTTP API
+           </span>
+          </div>
+          <div class="px-2">
+           <i class="fas fa-wifi text-green-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            WebSocket
+           </span>
+          </div>
+          <div class="px-2">
+           <i class="fas fa-file-alt text-green-400 text-lg block">
+           </i>
+           <span class="text-xs">
+            NMEA
+           </span>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <!-- Footer with technical detail -->
+   <div class="mt-4 text-center text-xs text-gray-500">
+    Node.js Backend • Dual Mode Processing • Real-time Position Management
+   </div>
+  </div>
+ 
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

@@ -1,0 +1,28 @@
+1. Revisar el flujo actual del simulador:
+   - Abrir `tools/gps-sim.js` y documentar qué campos envía al servidor (`id`, `lat`, `lon`, `timestamp`).
+   - Identificar dónde se consumen estos datos en el servidor para preparar la nueva entrada.
+
+2. Caracterizar la fuente GPS real:
+   - Conectar el dispositivo GPS físico y capturar ejemplos de tramas NMEA (GPGGA/GPRMC) vía puerto serie o TCP.
+   - Registrar qué campos están disponibles (hora, latitud, longitud, altitud, calidad, satélites) y su frecuencia.
+
+3. Diseñar el módulo de conversión NMEA → mensaje interno:
+   - Puedes basarte en el script generales/serial-x.py para ver como hacemos la conversión en python para otro script
+   - Crear un servicio que lea las tramas reales, convierta latitud/longitud a decimal y genere `{id, lat, lon, ts}`.
+   - Definir cómo asignar el `id` del corredor (configuración, mapping dinámico, etc.).
+   - Manejar validaciones básicas (tramas incompletas, fix inválido, pérdidas de señal).
+
+4. Integrar el nuevo flujo con el servidor:
+   - Ajustar el punto de entrada del servidor para aceptar mensajes del convertidor NMEA además del simulador.
+   - Permitir alternar entre modo simulado y modo real mediante configuración o flag de arranque.
+   - Garantizar que ambos recorridos produzcan el mismo payload que consumen clientes y UI.
+
+5. Pruebas con hardware real:
+   - Ejecutar el convertidor con el GPS conectado y verificar en tiempo real los corredores en el mapa/leaderboard.
+   - Comparar tiempos y trayectoria con registros esperados para confirmar precisión.
+   - Monitorear logs ante posibles reconexiones o pérdida de mensajes.
+
+6. Documentar y cerrar:
+   - Actualizar la documentación del proyecto con el flujo NMEA, dependencias (p. ej. `pyserial`) y pasos de ejecución.
+   - Registrar en `estado_desarrollo.txt` los hallazgos y próximos pendientes.
+   - Preparar instrucciones de fallback para continuar usando el simulador cuando no haya GPS disponible.

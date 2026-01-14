@@ -1,0 +1,269 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Servidor Intermedio (Python)
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; overflow: hidden; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: #BDBDBD;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .feature-icon {
+            margin-right: 15px;
+            color: #4CAF50;
+            flex-shrink: 0;
+        }
+        .flow-arrow {
+            color: #2196F3;
+            margin: 0 10px;
+        }
+        .flow-box {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .flow-container {
+            position: relative;
+            height: 100px;
+            margin: 20px 0;
+        }
+    
+html {
+    overflow: hidden;
+}
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-1{margin-bottom:0.25rem}.mb-4{margin-bottom:1rem}.mr-1{margin-right:0.25rem}.mt-2{margin-top:0.5rem}.mt-auto{margin-top:auto}.flex{display:flex}.h-full{height:100%}.w-1\/2{width:50%}.w-full{width:100%}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.justify-center{justify-content:center}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.p-12{padding:3rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-semibold{font-weight:600}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-12 flex flex-col" style=" overflow: hidden;">
+   <!-- Title -->
+   <div class="title">
+    Servidor Intermedio (Python)
+   </div>
+   <!-- Subtitle -->
+   <div class="subtitle" style="">
+    Gateway esencial entre hardware de geolocalización y backend principal
+   </div>
+   <!-- Main Content -->
+   <div class="flex flex-1">
+    <!-- Left Column -->
+    <div class="w-1/2 pr-6">
+     <div class="content-box h-full flex flex-col">
+      <h3 class="text-xl font-semibold mb-4">
+       Propósito del Servidor
+      </h3>
+      <p class="text-gray-300 mb-4">
+       Servidor Python que actúa como puente entre hardware de geolocalización y backend principal. Recibe datos del rover, los valida, formatea y envía de manera segura para su procesamiento y visualización.
+      </p>
+      <h3 class="text-xl font-semibold mb-4">
+       Flujo de Datos
+      </h3>
+      <div class="flow-container" id="data-flow">
+<!-- D3.js will render the flow diagram here -->
+</div>
+      <div class="mt-auto">
+       <div class="text-center text-sm text-gray-400 mt-2">
+        <i class="fas fa-info-circle mr-1">
+        </i>
+        El servidor escucha conexiones TCP entrantes con autenticación Base64
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Right Column -->
+    <div class="w-1/2 pl-6">
+     <div class="content-box h-full flex flex-col">
+      <h3 class="text-xl font-semibold mb-4">
+       Funcionalidades Clave
+      </h3>
+      <div class="feature-item">
+       <div class="feature-icon">
+        <i class="fas fa socket text-2xl">
+        </i>
+       </div>
+       <div>
+        Recepción de datos por socket TCP
+       </div>
+      </div>
+      <div class="feature-item">
+       <div class="feature-icon">
+        <i class="fas fa-key text-2xl">
+        </i>
+       </div>
+       <div>
+        Autenticación de dispositivos mediante token Base64
+       </div>
+      </div>
+      <div class="feature-item">
+       <div class="feature-icon">
+        <i class="fas fa-file-alt text-2xl">
+        </i>
+       </div>
+       <div>
+        Parseo de sentencias NMEA (GGA y RMC)
+       </div>
+      </div>
+      <div class="feature-item">
+       <div class="feature-icon">
+        <i class="fas fa-paper-plane text-2xl">
+        </i>
+       </div>
+       <div>
+        Envío de datos vía HTTP POST al backend
+       </div>
+      </div>
+      <div class="mt-auto flex justify-center">
+       <div class="bg-gray-800 p-3 rounded-lg w-full">
+        <div class="text-center mb-1 text-gray-300">
+         Ejemplo de datos procesados
+        </div>
+        <div class="bg-gray-900 p-2 rounded text-xs font-mono">
+         <pre|{ "2025-12-16t10:30:45.123z"="" "4810021042",="" "altitude":="" "device_id":="" "fix_status":="" "latitude":="" "longitude":="" "rtk="" "speed":="" "timestamp":="" -34.603722,="" -58.381592,="" 12.5,="" 25.5,="" fix",="" pre="" }|<="">
+         </pre|{>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   // D3.js visualization for data flow
+        const flowContainer = d3.select("#data-flow");
+        const width = flowContainer.node().getBoundingClientRect().width;
+        const height = 100;
+        
+        const svg = flowContainer.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        // Define the flow steps
+        const steps = [
+            { id: "rover", label: "Rover RTK", icon: "satellite-dish", x: 50, y: height/2 },
+            { id: "python", label: "Servidor Python", icon: "server", x: width/2, y: height/2 },
+            { id: "backend", label: "Backend Node.js", icon: "laptop-code", x: width - 50, y: height/2 }
+        ];
+        
+        // Draw the flow arrows
+        svg.append("path")
+            .attr("d", `M${steps[0].x + 60},${steps[0].y} L${steps[1].x - 60},${steps[1].y}`)
+            .attr("stroke", "#2196F3")
+            .attr("stroke-width", 2)
+            .attr("marker-end", "url(#arrow)");
+            
+        svg.append("path")
+            .attr("d", `M${steps[1].x + 60},${steps[1].y} L${steps[2].x - 60},${steps[2].y}`)
+            .attr("stroke", "#2196F3")
+            .attr("stroke-width", 2)
+            .attr("marker-end", "url(#arrow)");
+        
+        // Define arrow marker
+        svg.append("defs").append("marker")
+            .attr("id", "arrow")
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 8)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "#2196F3");
+        
+        // Draw the step circles
+        const nodes = svg.selectAll("g")
+            .data(steps)
+            .enter()
+            .append("g")
+            .attr("transform", d => `translate(${d.x}, ${d.y})`);
+        
+        nodes.append("circle")
+            .attr("r", 35)
+            .attr("fill", "#1E1E1E")
+            .attr("stroke", d => d.id === "python" ? "#4CAF50" : "#2196F3")
+            .attr("stroke-width", 2);
+        
+        // Add icons to steps
+        nodes.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.3em")
+            .attr("fill", "#FFFFFF")
+            .attr("font-family", "FontAwesome")
+            .attr("font-size", "20px")
+            .text(d => {
+                const iconMap = {
+                    "satellite-dish": "\uf7c0",
+                    "server": "\uf233",
+                    "laptop-code": "\uf5fc"
+                };
+                return iconMap[d.icon];
+            });
+        
+        // Add labels below steps
+        nodes.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", 55)
+            .attr("fill", "#FFFFFF")
+            .attr("font-size", "14px")
+            .text(d => d.label);
+            
+        // Add data labels
+        svg.append("text")
+            .attr("x", (steps[0].x + steps[1].x) / 2)
+            .attr("y", steps[0].y - 20)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#BDBDBD")
+            .attr("font-size", "12px")
+            .text("Datos NMEA crudos");
+            
+        svg.append("text")
+            .attr("x", (steps[1].x + steps[2].x) / 2)
+            .attr("y", steps[1].y - 20)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#BDBDBD")
+            .attr("font-size", "12px")
+            .text("Datos procesados");
+  </script>
+ 
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

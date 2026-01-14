@@ -1,0 +1,59 @@
+
+## 📄 Documento de Objetivos – Integración de GPS Real al Simulador de Carreras
+
+### 1. Contexto general
+
+Actualmente el simulador de carreras georreferenciadas cuenta con un componente que **emula dispositivos GPS** mediante un script que envía coordenadas de posición (latitud y longitud) al servidor WebSocket.
+Este mecanismo ha permitido probar el flujo completo del sistema (simulación, visualización en mapa, y actualización de posiciones en tiempo real) sin depender de un hardware real.
+
+En esta nueva etapa del proyecto, el objetivo es **sustituir la fuente de datos simulada** por una **fuente de datos proveniente de un GPS físico o real**, adaptando la forma en que el servidor interpreta y procesa las coordenadas entrantes.
+
+---
+
+### 2. Necesidad identificada
+
+Durante la revisión de los dispositivos GPS disponibles, se observó que los equipos reales **no envían las coordenadas en formato simple (latitud/longitud)**, sino que utilizan **mensajes NMEA**, particularmente las tramas **GPGGA o GPRMC**, que son los formatos estándar de salida de módulos como los U-Blox.
+Por lo tanto, el servidor actual no puede interpretar directamente estas cadenas y requiere una capa de **traducción o decodificación**.
+
+---
+
+### 3. Objetivo principal
+
+**Permitir que el servidor del simulador reciba y procese directamente las tramas GPS reales (NMEA), interpretando sus coordenadas y transformándolas al formato interno utilizado por el sistema.**
+
+Esto implica que el flujo de entrada se ajuste a las características de un GPS físico, conservando la misma estructura de salida hacia el cliente (mapa, leaderboard, gráficas).
+
+---
+
+### 4. Objetivos específicos
+
+1. **Identificar y revisar el script actual de simulación GPS**
+   Localizar el script existente que genera las coordenadas simuladas (ubicado en `tools/gps-sim.js`) y documentar su estructura de datos actual (ID, lat, lon, timestamp). Este servirá como referencia para definir la nueva capa de entrada.
+
+2. **Analizar el formato NMEA recibido por el GPS real**
+   Determinar el tipo exacto de trama utilizada (GPGGA, GPRMC, etc.), los campos relevantes (latitud, longitud, hora, altitud, número de satélites, etc.) y la manera en que se reciben (por socket, puerto serial, o TCP).
+
+3. **Diseñar un módulo de conversión**
+   Crear un componente intermedio que **interprete las tramas NMEA** y **genere mensajes equivalentes** a los que el servidor espera actualmente (es decir, `{id, lat, lon, ts}`), sin alterar el resto de la infraestructura.
+
+4. **Probar la integración con un dispositivo GPS real**
+   Conectar un dispositivo físico (por ejemplo, módulo U-Blox o receptor USB) y validar la conversión en tiempo real, asegurando que los corredores se muestren correctamente en el mapa.
+
+5. **Mantener compatibilidad con el modo simulado**
+   Conservar el funcionamiento del modo de simulación para pruebas controladas, permitiendo alternar entre fuente “simulada” y fuente “real” desde la configuración del sistema.
+
+---
+
+### 5. Resultados esperados
+
+* El servidor podrá recibir datos tanto de un **GPS físico** como del **script simulador**, indistintamente.
+* Las posiciones de los corredores se visualizarán correctamente en el mapa y en las gráficas de velocidad.
+* El sistema quedará preparado para **carreras con dispositivos GPS reales** transmitiendo sus posiciones en vivo.
+* Se documentará el proceso de conversión desde NMEA hacia latitud/longitud, como parte del nuevo flujo de entrada.
+
+---
+
+### 6. Alcance
+
+Este trabajo no implica cambios en la interfaz de usuario ni en la lógica de visualización del simulador.
+El enfoque está centrado en el **flujo de datos de entrada**, asegurando la correcta **integración, interpretación y compatibilidad** entre fuentes simuladas y reales.

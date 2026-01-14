@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manual Operativo Tecnico - RTK Carreras</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="kicker">RTK / Carreras</p>
+      <h1>Manual operativo tecnico</h1>
+      <p class="subtitle">Implementacion, puesta en marcha, verificacion y operacion del sistema.</p>
+      <div class="meta">
+        <span>Proyecto: Rovers RTK</span>
+        <span>Version: 1.0</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside class="toc">
+      <h2>Indice</h2>
+      <nav>
+        <a href="#vision">1. Vision general</a>
+        <a href="#arquitectura">2. Arquitectura y componentes</a>
+        <a href="#implementacion">3. Implementacion</a>
+        <a href="#arranque">4. Lanzar el sistema</a>
+        <a href="#exposicion">5. Publicar en Internet</a>
+        <a href="#rover">6. Configuracion del rover</a>
+        <a href="#verificacion">7. Comprobar funcionamiento</a>
+        <a href="#interfaz">8. Interfaz grafica</a>
+        <a href="#operacion">9. Operacion diaria</a>
+        <a href="#modos">10. Testing vs Carrera</a>
+        <a href="#limitaciones">11. Limitaciones</a>
+        <a href="#rutas">12. Rutas y archivos</a>
+        <a href="#troubleshooting">13. Troubleshooting rapido</a>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <section id="vision">
+        <h2>1. Vision general</h2>
+        <p>
+          El sistema recibe posiciones GPS (NMEA o JSON), proyecta cada competidor sobre una pista y
+          transmite el avance en tiempo real a una interfaz web. Puede operar como simulador de carrera
+          o como gestor de una carrera real con dispositivos GPS.
+        </p>
+      </section>
+
+      <section id="arquitectura">
+        <h2>2. Arquitectura y componentes</h2>
+        <div class="stack">
+          <article>
+            <h3>Servidor Node.js</h3>
+            <p>
+              <strong>Archivo:</strong> ___scriptsrtk/carreras/server.js<br />
+              Expone HTTP y WebSocket. Sirve la UI, recibe GPS por WS o HTTP y emite snapshots.
+            </p>
+          </article>
+          <article>
+            <h3>Simulador</h3>
+            <p>
+              <strong>Archivo:</strong> ___scriptsrtk/carreras/src/raceSimulator.js<br />
+              Genera posiciones artificiales por tick con variaciones de velocidad y desvio lateral.
+            </p>
+          </article>
+          <article>
+            <h3>Parser NMEA</h3>
+            <p>
+              <strong>Archivo:</strong> ___scriptsrtk/carreras/src/nmea.js<br />
+              Valida checksum y convierte GGA/RMC a lat/lon decimales.
+            </p>
+          </article>
+          <article>
+            <h3>Puente TCP</h3>
+            <p>
+              <strong>Archivo:</strong> escucha6.py<br />
+              Escucha TCP 7070, extrae NMEA y hace POST a /api/gps.
+            </p>
+          </article>
+          <article>
+            <h3>Rovers RTK</h3>
+            <p>
+              Dispositivos de campo que reciben correcciones y reportan posiciones GPS al sistema.
+            </p>
+          </article>
+          <article>
+            <h3>Mosaic X5 (base station)</h3>
+            <p>
+              Estacion base que publica correcciones RTK hacia los rovers a traves del tunel ngrok.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="implementacion">
+        <h2>3. Implementacion</h2>
+        <ol>
+          <li>Definir la pista: usar la UI o un archivo JSON con puntos {lat, lon}.</li>
+          <li>Montar el servidor Node (carreras o bkpcarreras).</li>
+          <li>Decidir el canal de GPS: NMEA por WebSocket o JSON por HTTP POST.</li>
+          <li>Si hay GPS externos, exponer el puerto con ngrok y usar escucha6.py como puente.</li>
+        </ol>
+        <div class="note">
+          <strong>Nota:</strong> Para carrera real se requiere enviar <code>start_real</code> por WebSocket
+          antes de aceptar posiciones.
+        </div>
+      </section>
+
+      <section id="arranque">
+        <h2>4. Lanzar el sistema</h2>
+        <h3>4.1 Servidor de carreras</h3>
+        <pre><code>cd ___scriptsrtk/carreras
+npm install
+node server.js
+</code></pre>
+        <h3>4.2 Modo testing (bkpcarreras)</h3>
+        <pre><code>cd ___scriptsrtk/bkpcarreras
+npm install
+MODE=testing node server.js
+</code></pre>
+        <h3>4.3 Puente TCP a HTTP</h3>
+        <pre><code>python3 escucha6.py
+</code></pre>
+        <h3>4.4 Exponer puerto con ngrok</h3>
+        <pre><code>ngrok tcp --region=us --remote-addr=5.tcp.ngrok.io:22500 7070
+</code></pre>
+        <h3>4.5 Enlace para base station Mosaic X5</h3>
+        <p>
+          El Mosaic X5 debe apuntar al segundo tunel TCP para publicar correcciones hacia los rovers.
+          Usa el puerto configurado en la base station y actualiza el destino con la URL de ngrok asignada.
+        </p>
+        <pre><code>ngrok tcp --region=us --remote-addr=3.tcp.ngrok.io:27722 192.168.1.13:2101
+</code></pre>
+        <div class="note">
+          <strong>Nota:</strong> En produccion, las direcciones de ngrok cambian segun la cuenta.
+          Se recomienda contratar un plan de ngrok y reemplazar estas URLs por las oficiales del entorno productivo.
+        </div>
+      </section>
+
+      <section id="exposicion">
+        <h2>5. Publicar en Internet</h2>
+        <p>
+          Para desplegar en un VPS o servidor tradicional, el proceso recomendado es mantener Node.js
+          escuchando en un puerto interno (ej. 3030) y exponerlo por un proxy reverso (NGINX o Apache)
+          con HTTPS y soporte WebSocket.
+        </p>
+        <h3>5.1 Pasos sugeridos</h3>
+        <ol>
+          <li>Configurar el proceso Node.js como servicio (systemd o pm2).</li>
+          <li>Habilitar el puerto interno en el firewall solo para localhost.</li>
+          <li>Publicar el dominio con un proxy reverso y TLS (certificado valido).</li>
+          <li>Permitir WebSocket y aumentar timeouts si hay sesiones largas.</li>
+        </ol>
+        <h3>5.2 Notas para el proxy</h3>
+        <ul>
+          <li>Habilitar <code>Upgrade</code> y <code>Connection</code> para WebSocket.</li>
+          <li>Exponer la ruta <code>/</code>, <code>/nmea</code> y <code>/api/gps</code>.</li>
+          <li>Configurar limites de body para el POST (API GPS).</li>
+        </ul>
+        <div class="note">
+          <strong>Nota:</strong> La URL del servicio en produccion debe ser la misma que se configure
+          en los emisores (rovers/puentes) y en la UI. Actualiza los endpoints en los dispositivos.
+        </div>
+      </section>
+
+      <section id="rover">
+        <h2>6. Configuracion del rover</h2>
+        <p>
+          Basado en la guia del 4G NTRIP Client de ArduSimple, el rover debe configurarse para
+          recibir correcciones RTK y enviar sus datos al servidor por TCP.
+        </p>
+        <h3>6.1 Preparacion del hardware</h3>
+        <ul>
+          <li>Apagar el simpleRTK2B antes de conectar el 4G NTRIP Client al socket XBee.</li>
+          <li>Conectar ambas antenas 4G del modulo para mejor enlace celular.</li>
+          <li>Deshabilitar la salida UART1/UART2 hacia el XBee antes de la primera configuracion.</li>
+          <li>No insertar la SIM hasta terminar la configuracion (PIN deshabilitado).</li>
+        </ul>
+        <p>
+          La configuracion se carga con el 4G NTRIP Master Configuration Tool usando el puerto
+          POWER+XBEE del dispositivo.
+        </p>
+        <h3>6.2 Parametros de red y NTRIP</h3>
+        <ul>
+          <li>SIM/APN: nombre APN, usuario y password (si aplica), y roaming si aplica.</li>
+          <li>NTRIP Client: caster, puerto, usuario, password y mountpoint.</li>
+          <li>Reconexion: definir delay si el caster corta conexiones frecuentes.</li>
+        </ul>
+        <div class="note">
+          <strong>Correcciones RTK:</strong> en este proyecto, el caster normalmente apunta al Mosaic X5
+          expuesto por ngrok. Usa el host y puerto del tunel de correcciones configurado en <code>ngrok.txt</code>.
+        </div>
+        <h3>6.3 Envio de datos por TCP al servidor</h3>
+        <ul>
+          <li>Habilitar <strong>TCP socket client</strong> en el 4G NTRIP Client.</li>
+          <li>TCP server hostname: URL/host del tunel ngrok que expone el puerto 7070.</li>
+          <li>TCP server port: el puerto remoto configurado para el tunel 7070.</li>
+          <li>Mensajes a enviar: <strong>NMEA</strong> o <strong>NMEA-GGA</strong> (recomendado).</li>
+          <li>Autenticacion TCP: usar el ID del rover como usuario para que <code>escucha6.py</code>
+              lo identifique correctamente.</li>
+        </ul>
+        <div class="note">
+          <strong>Orden recomendado:</strong> cargar el archivo de parametros, insertar la SIM, reiniciar
+          el modulo y verificar que el estado de red pase a registrado.
+        </div>
+      </section>
+
+      <section id="verificacion">
+        <h2>7. Comprobar funcionamiento</h2>
+        <ol>
+          <li>Abra la UI en <code>http://localhost:3030</code>.</li>
+          <li>Inicie carrera real con <code>start_real</code> desde el panel de control.</li>
+          <li>Envie un fix de prueba:</li>
+        </ol>
+        <pre><code>curl -X POST http://localhost:3030/api/gps \
+  -H "Content-Type: application/json" \
+  -d '{"id":"C1","lat":19.4326,"lon":-99.1332,"fix":1,"nm":1}'
+</code></pre>
+        <p>Deberia verse un marcador y eventos en la consola del servidor.</p>
+      </section>
+
+      <section id="interfaz">
+        <h2>8. Interfaz grafica</h2>
+        <h3>6.1 Controles principales</h3>
+        <ul>
+          <li>Boton ⚙️: abre la configuracion de carrera.</li>
+          <li>Boton ▶️: inicia la carrera con la configuracion actual.</li>
+          <li>Boton Stop: detiene la carrera activa.</li>
+        </ul>
+        <h3>6.2 Configuracion desde la UI</h3>
+        <ul>
+          <li>Modo de carrera: Simulada o Real (GPS).</li>
+          <li>Competidores, duracion promedio, tick y ancho lateral.</li>
+          <li>Edicion activa: permite agregar puntos haciendo clic en el mapa.</li>
+          <li>Cargar pista: seleccionar JSON con array de puntos {lat, lon}.</li>
+          <li>Puntos de seguimiento: dibuja trazas por competidor.</li>
+          <li>Gap de rebase: evita cambios de ranking por diferencias minimas.</li>
+        </ul>
+        <h3>6.3 Operar una carrera desde la interfaz</h3>
+        <ol>
+          <li>Abrir ⚙️ y elegir el modo (Simulada o Real).</li>
+          <li>Definir pista: clics en el mapa o cargar JSON.</li>
+          <li>Presionar Iniciar para enviar <code>start</code> o <code>start_real</code>.</li>
+        </ol>
+        <h3>6.4 Elementos visuales</h3>
+        <ul>
+          <li>Mapa con marcadores de competidores y trazas opcionales.</li>
+          <li>Tablero de posiciones con ranking y estado de llegada.</li>
+          <li>Grafica de velocidad vs avance por competidor.</li>
+          <li>Asignacion de imagen por competidor desde el tablero.</li>
+        </ul>
+      </section>
+
+      <section id="operacion">
+        <h2>9. Operacion diaria</h2>
+        <ul>
+          <li>Definir pista y cantidad esperada de competidores.</li>
+          <li>Confirmar canal de datos (NMEA o JSON) y conectividad.</li>
+          <li>Monitorear el tablero: progreso, velocidad y finalizaciones.</li>
+          <li>Detener manualmente con <code>stop</code> si es necesario.</li>
+        </ul>
+      </section>
+
+      <section id="modos">
+        <h2>10. Testing vs Carrera</h2>
+        <div class="grid">
+          <article>
+            <h3>Similitudes</h3>
+            <ul>
+              <li>Usan el mismo servidor HTTP + WebSocket.</li>
+              <li>Reciben datos por WS /nmea y por HTTP POST /api/gps.</li>
+              <li>La UI consume eventos en tiempo real.</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Interfaz de carrera</h3>
+            <ul>
+              <li>Calcula progreso sobre pista y ranking.</li>
+              <li>Muestra tablero completo y trazas.</li>
+              <li>Requiere <code>start_real</code> para aceptar fixes.</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Interfaz de testing</h3>
+            <ul>
+              <li>Vista minimalista para monitoreo rapido.</li>
+              <li>Retransmite cada fix sin calculos de carrera.</li>
+              <li>Util para validar conectividad y calidad de datos.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="limitaciones">
+        <h2>11. Limitaciones</h2>
+        <ul>
+          <li>Solo soporta NMEA GGA y RMC.</li>
+          <li>La pista debe tener al menos 2 puntos.</li>
+          <li>Sin <code>start_real</code> los fixes se rechazan en modo carrera.</li>
+          <li>Precision depende del GPS y de la proyeccion lineal por segmento.</li>
+        </ul>
+      </section>
+
+      <section id="rutas">
+        <h2>12. Rutas y archivos</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Elemento</th>
+              <th>Ruta</th>
+              <th>Descripcion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Servidor</td>
+              <td>___scriptsrtk/carreras/server.js</td>
+              <td>HTTP + WebSocket + UI</td>
+            </tr>
+            <tr>
+              <td>Simulador</td>
+              <td>___scriptsrtk/carreras/src/raceSimulator.js</td>
+              <td>Simulacion de carrera</td>
+            </tr>
+            <tr>
+              <td>UI</td>
+              <td>___scriptsrtk/carreras/public/</td>
+              <td>Mapa, tablero y controles</td>
+            </tr>
+            <tr>
+              <td>UI testing</td>
+              <td>___scriptsrtk/bkpcarreras/public-testing/</td>
+              <td>Monitoreo minimalista</td>
+            </tr>
+            <tr>
+              <td>Puente TCP</td>
+              <td>escucha6.py</td>
+              <td>NMEA a HTTP POST</td>
+            </tr>
+            <tr>
+              <td>Comandos ngrok</td>
+              <td>ngrok.txt</td>
+              <td>Exposicion de puertos</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>13. Troubleshooting rapido</h2>
+        <ul>
+          <li>No llegan posiciones: verificar <code>start_real</code> y endpoint correcto.</li>
+          <li>Sin UI: confirmar puerto 3030 y dependencias <code>npm install</code>.</li>
+          <li>Datos NMEA rechazados: revisar checksum y tipo de sentencia.</li>
+          <li>Puente TCP sin datos: validar que ngrok apunte a 7070 y no haya firewall.</li>
+        </ul>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p>Manual generado para el proyecto RTK Carreras.</p>
+  </footer>
+</body>
+</html>

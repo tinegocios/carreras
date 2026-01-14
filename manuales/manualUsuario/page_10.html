@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="es" style="--viewport-height: 6.92px;"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Flujo del Código Python
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js">
+  </script>
+  <script src="https://picture-search.skywork.ai/aippt/static/tailwindcss.com">
+  </script>
+  <style>
+   body {width: 1280px; min-height: 720px; overflow: hidden; margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .flow-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .flow-step {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .flow-icon {
+            background-color: rgba(76, 175, 80, 0.2);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .flow-connector {
+            position: absolute;
+            left: 22px;
+            bottom: -15px;
+            height: 15px;
+            width: 2px;
+            background-color: #4CAF50;
+            z-index: 1;
+        }
+        .flow-connector-horizontal {
+            position: absolute;
+            right: -25px;
+            top: 25px;
+            width: 25px;
+            height: 2px;
+            background-color: #4CAF50;
+            z-index: 1;
+        }
+    
+html {
+    overflow: hidden;
+}
+  </style>
+ <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-1{margin-bottom:0.25rem}.mt-2{margin-top:0.5rem}.flex{display:flex}.grid{display:grid}.h-16{height:4rem}.h-full{height:100%}.w-full{width:100%}.flex-1{flex:1 1 0%}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.gap-6{gap:1.5rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.p-10{padding:2.5rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-semibold{font-weight:600}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-orange-400{--tw-text-opacity:1;color:rgb(251 146 60 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}</style></head>
+ <body class="">
+  <div class="slide p-10 flex flex-col" style=" overflow: hidden;">
+   <!-- Title -->
+   <div class="title">
+    Flujo del Código Python
+   </div>
+   <!-- Main Content -->
+   <div class="flex-1 flex flex-col">
+    <div class="grid grid-cols-2 gap-6 h-full">
+     <!-- First Column -->
+     <div class="flex flex-col space-y-2">
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-plug text-green-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          1. Conexión TCP
+         </h3>
+         <p class="text-gray-300">
+          El servidor escucha conexiones entrantes de dispositivos rover
+         </p>
+        </div>
+       </div>
+       <div class="flow-connector">
+       </div>
+      </div>
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-key text-yellow-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          2. Autenticación Base64
+         </h3>
+         <p class="text-gray-300">
+          Los dispositivos se autentican con un token Base64
+         </p>
+        </div>
+       </div>
+       <div class="flow-connector">
+       </div>
+      </div>
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-stream text-blue-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          3. Recepción Stream NMEA
+         </h3>
+         <p class="text-gray-300">
+          El servidor lee el flujo de datos NMEA del rover
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Second Column -->
+     <div class="flex flex-col space-y-2">
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-code-branch text-purple-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          4. Validación de Fix RTK
+         </h3>
+         <p class="text-gray-300">
+          Se verifica si la sentencia NMEA tiene indicador &#34;RTK Fix&#34;
+         </p>
+        </div>
+       </div>
+       <div class="flow-connector">
+       </div>
+      </div>
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-database text-orange-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          5. Parseo y Extracción
+         </h3>
+         <p class="text-gray-300">
+          Se extraen datos como latitud, longitud y velocidad
+         </p>
+        </div>
+       </div>
+       <div class="flow-connector">
+       </div>
+      </div>
+      <div class="flow-box flex-1">
+       <div class="flow-step flex items-start">
+        <div class="flow-icon">
+         <i class="fas fa-paper-plane text-red-400 text-2xl">
+         </i>
+        </div>
+        <div>
+         <h3 class="text-xl font-semibold mb-1">
+          6. Envío HTTP POST
+         </h3>
+         <p class="text-gray-300">
+          Datos procesados se envían en JSON al backend
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Flow Diagram integrated into last box -->
+    <div class="mt-2">
+     <div class="w-full h-16" id="flow-diagram"></div>
+    </div>
+   </div>
+  </div>
+  <script>
+   // D3.js visualization for flow diagram
+        const flowContainer = d3.select("#flow-diagram");
+        const width = flowContainer.node().getBoundingClientRect().width;
+        const height = 60;
+        
+        const svg = flowContainer.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        // Define the flow steps
+        const steps = [
+            { name: "Conexión", icon: "fa-plug", color: "#4CAF50" },
+            { name: "Autenticación", icon: "fa-key", color: "#FFC107" },
+            { name: "Recepción", icon: "fa-stream", color: "#2196F3" },
+            { name: "Validación", icon: "fa-code-branch", color: "#9C27B0" },
+            { name: "Procesamiento", icon: "fa-database", color: "#FF5722" },
+            { name: "Envío", icon: "fa-paper-plane", color: "#F44336" }
+        ];
+        
+        // Calculate positions
+        const stepWidth = width / steps.length;
+        
+        // Add flow steps
+        steps.forEach((step, i) => {
+            const x = i * stepWidth + stepWidth / 2;
+            
+            // Add circle
+            svg.append("circle")
+                .attr("cx", x)
+                .attr("cy", height / 2)
+                .attr("r", 15)
+                .attr("fill", step.color)
+                .attr("opacity", 0.7);
+                
+            // Add icon text (Font Awesome would be added via HTML)
+            svg.append("text")
+                .attr("x", x)
+                .attr("y", height / 2 + 5)
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .attr("font-family", "FontAwesome")
+                .attr("font-size", "12px")
+                .text(function() {
+                    // Map Font Awesome class to Unicode
+                    const iconMap = {
+                        "fa-plug": "\uf1e6",
+                        "fa-key": "\uf084",
+                        "fa-stream": "\uf550",
+                        "fa-code-branch": "\uf126",
+                        "fa-database": "\uf1c0",
+                        "fa-paper-plane": "\uf044"
+                    };
+                    return iconMap[step.icon] || "";
+                });
+                
+            // Add text label
+            svg.append("text")
+                .attr("x", x)
+                .attr("y", height - 5)
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .attr("font-size", "12px")
+                .text(step.name);
+                
+            // Add connecting line (except for last item)
+            if (i < steps.length - 1) {
+                svg.append("line")
+                    .attr("x1", x + 20)
+                    .attr("y1", height / 2)
+                    .attr("x2", x + stepWidth - 20)
+                    .attr("y2", height / 2)
+                    .attr("stroke", "#4CAF50")
+                    .attr("stroke-width", 2)
+                    .attr("stroke-dasharray", "5,3");
+            }
+        });
+  </script>
+ 
+
+<script data-sk-script-id="viewportHeightScript">
+      (function() {
+        var viewportHeight = window.top === window ? '1vh' : '6.92px';
+        document.documentElement.style.setProperty('--viewport-height', viewportHeight);
+      })();
+    </script>
+</body></html>

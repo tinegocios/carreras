@@ -1,0 +1,41 @@
+Proyecto: Simulador de carreras (`carreras`)
+================================================
+
+1. Proposito general
+   La carpeta `carreras` contiene un simulador de competencias sobre pistas GPS escrito en Node.js. Permite correr simulaciones virtuales con competidores autonomos y tambien monitorear carreras reales recibiendo fixes GPS en tiempo real via WebSocket o HTTP.
+
+2. Componentes principales
+   - Nucleo de simulacion (`src/`):
+     * `raceSimulator.js` define la clase `RaceSimulator` (EventEmitter) que actualiza posiciones de cada corredor en intervalos configurables. Ajusta velocidades alrededor de una media objetivo, aplica derivas aleatorias y offsets laterales sobre la polilinea de la pista, y emite eventos `tick` y `end`.
+     * `utils.js` agrupa utilidades geodesicas (Haversine, bearing, interpolacion sobre la pista, proyeccion de puntos al trazado y desplazamientos laterales).
+     * `nmea.js` parsea sentencias NMEA (tipos GGA y RMC) validando checksum, coordenadas y calidad de fix para convertirlas a datos utilizables.
+   - Servidor (`server.js`):
+     * Expone HTTP en el puerto 3030 para servir la interfaz estaticamente (`public/`) y un endpoint `POST /api/gps` que incorpora fixes GPS durante modo real.
+     * Gestiona un servidor WebSocket (`ws`) con dos modos: control (para iniciar/ detener simulaciones, solicitar modo real y enviar fixes) y nmea (para stream de sentencias NMEA crudas).
+     * Mantiene dos estados mutuamente excluyentes: `currentSim` para simulaciones sinteticas y `currentReal` para carreras reales. En ambos casos difunde instantaneas (`tick`) y finalizacion (`end`) a todos los clientes conectados.
+     * Registra en `logs/nmea.log` los mensajes entrantes, sean validos o con error, asegurando la creacion automática del directorio `logs/`.
+   - Interfaz web (`public/`):
+     * `index.html`, `styles.css` y `app.js` conforman un panel sobre Leaflet (+Chart.js) que permite dibujar/editar la pista, lanzar simulaciones, ver ranking en vivo, graficas de velocidad, controles de configuracion y tiras de adelantamientos. Se conecta por WebSocket al backend, actualiza marcadores, registra trazas opcionales y admite asociar imagenes a cada competidor.
+   - Utilidades y ejemplos:
+     * `example.js` y `quicktest.js` muestran usos directos del simulador por consola.
+     * `tools/generateOval.js` genera pistas ovaladas en JSON partiendo de un centro y radios en metros.
+     * `tools/gps-sim.js` reenvia puntos GPS paso a paso hacia el servidor (ideal para pruebas manuales o reproducir recorridos desde un archivo).
+     * Archivos JSON (`tracks.json`, `data_hipodromo_tandil.json`, `prueba1.json`) ofrecen pistas de referencia.
+
+3. Funcionamiento resumido
+   - Simulacion virtual: un cliente WebSocket envia `type: "start"` con la pista y parametros (competidores, duracion media, tick, desvio lateral). El backend crea un `RaceSimulator` que en cada tick calcula progreso y velocidades, proyecta sobre la pista y difunde el snapshot a todos los clientes. Al completar todos los corredores se emite `type: "end"`.
+   - Seguimiento real: tras `type: "start_real"` se almacena la pista y se aceptan fixes via WebSocket (`type: "gps"`) o HTTP (`/api/gps`). Cada fix se proyecta sobre la pista, se calcula distancia recorrida, velocidad instantanea (derivada entre lecturas) y estado de llegada. Los clientes reciben snapshots con todos los competidores reales.
+   - Ingreso NMEA: conexiones WebSocket al path `/nmea` pueden enviar sentencias (GGA/RMC). El backend las convierte usando `parseNmeaSentence` y las trata como fixes reales, registrando todos los mensajes en `logs/nmea.log`.
+
+4. Ejecucion basica
+   - Instalar dependencias: `npm install` dentro de `carreras` (requiere Node.js 16+).
+   - Ejecutar backend + interfaz: `node server.js`, luego abrir `http://localhost:3030` en un navegador compatible con WebSocket.
+   - Probar simulador desde consola: `node example.js` o adaptar scripts propios importando `simulateRace`.
+   - Para pruebas de GPS reales, iniciar modo real desde la interfaz (o enviar el mensaje WebSocket) y usar `node tools/gps-sim.js --url ws://localhost:3030 --id CORREDOR --file ./ruta.json`.
+
+5. Archivos de soporte y salidas
+   - `logs/` guarda registros de NMEA y salida del servidor (`server.log`, `salida.log`, `output.log`).
+   - `public/` y `public-testing/` contienen variantes del front-end (esta ultima sin recursos de produccion).
+   - `package.json` define scripts, dependencias (`ws`, `leaflet`, `chart.js` via CDN en el front-end) y configuraciones basicas.
+
+En conjunto, el software permite disenar pistas, simular carreras sintéticas, recibir datos GPS en vivo y visualizar el progreso de competidores en tiempo real tanto en consola como en una interfaz web interactiva.

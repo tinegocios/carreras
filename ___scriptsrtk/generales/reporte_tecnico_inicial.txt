@@ -1,0 +1,104 @@
+REPORTE TÉCNICO – SIMULADOR DE CARRERAS GEORREFERENCIADAS
+
+1. Arquitectura general
+   - Aplicación Node.js que expone un servidor HTTP (`server.js`) encargado de servir estáticos desde `public/` y ofrecer un endpoint WebSocket (WS) sobre la misma conexión.
+   - No se usa framework de frontend; la UI está definida con HTML/CSS/JS plano (`public/index.html`, `public/styles.css`, `public/app.js`). Leaflet y Chart.js se consumen vía CDN.
+   - Lógica core de simulación y utilidades de geodesia ubicadas en `src/` (`raceSimulator.js`, `utils.js`). La dependencia externa es únicamente `ws` para WebSockets.
+   - Herramientas auxiliares en `tools/` (generación de pistas elípticas y simulación manual de GPS) y scripts de ejemplo/diagnóstico (`example.js`, `quicktest.js`).
+
+2. Servidor HTTP + WebSocket (`server.js`)
+   - Inicializa un servidor HTTP básico que responde `/health` con “ok” y resuelve archivos dentro de `public/` (protección contra path traversal).
+   - Instancia un `WebSocket.Server` reutilizando el servidor HTTP. Maneja tres flujos principales:
+     a. Simulación virtual (`msg.type === "start"`): inicializa `simulateRace` con parámetros recibidos (pista, número de competidores, cadencia de tick, duración promedio y ancho lateral). Cada evento `tick` o `end` se reemite a todos los clientes conectados. Si existía una simulación previa, se detiene antes de comenzar la nueva.
+     b. Seguimiento en tiempo real (`msg.type === "start_real"` + mensajes `gps`): prepara estructura `currentReal` precalculando distancias acumuladas de la pista (`computeCumulative`) y longitud total. Cada paquete `gps` actualiza o crea el registro del corredor proyectando la posición al tramo más cercano (`projectToTrack`), aplicando heurísticas de monotonicidad y detección de meta. Emite snapshots `tick` con progreso, velocidad estimada (derivada de la distancia sobre el tiempo) y estado de finalización. Cuando todos los esperados terminan se emite `end`.
+     c. Detención explícita (`msg.type === "stop"`): corta simulaciones activas (virtual o real) y notifica `end`.
+   - Controla estado global `currentSim` (instancia de `RaceSimulator`) y `currentReal`. La conexión inicial envía un saludo `{type:"hello"}` para confirmar al cliente.
+
+3. Motor de simulación (`src/raceSimulator.js`)
+   - `RaceSimulator` extiende `EventEmitter`; recibe pista (`track`), número de competidores, duración promedio, intervalo de actualización (`tickMs`) y ancho lateral permitido.
+   - Construye un arreglo de competidores con:
+     • Identificador incremental (`idPrefix + índice`).
+     • Distancia inicial con leve “jitter” para evitar superposición.
+     • Velocidad base derivada de la longitud de la pista y la duración objetivo, con variación aleatoria ±15%.
+     • Factores dinámicos: `speedFactor` que fluctúa suavemente (ruido blanco con fuerza de retorno), offset lateral (`targetOffset` / `currentOffset`) que cambia cada ~12–34 ticks para simular zig-zag dentro del carril.
+   - Cada `_update`:
+     • Ajusta `speedFactor` y offset lateral.
+     • Avanza distancia según velocidad (m/s) y delta de tiempo.
+     • Interpola posición a lo largo de la pista (`interpolateAlong`) y aplica desplazamiento perpendicular (`applyLateralOffset`).
+     • Calcula progreso, bandera de meta y acumula conteo de finalizados.
+     • Emite `tick` con estructura `{ t, tickMs, competitors[], finishedCount, total }`.
+     • Al completarse todos los corredores emite `end` y detiene el intervalo.
+   - Función de conveniencia `simulateRace(options)` que crea e inicia la simulación en el siguiente ciclo de event loop.
+
+4. Utilidades geográficas (`src/utils.js`)
+   - Conversión grados↔radianes, constante de radio terrestre.
+   - `haversine(a,b)`: distancia en metros entre dos puntos (lat/lon).
+   - `bearing(a,b)`: rumbo inicial entre puntos (radianes).
+   - `computeCumulative(track)`: distancias acumulativas por vértice, base para interpolación y proyección.
+   - `interpolateAlong(track,cumulative,d)`: devuelve posición aproximada (lat/lon) y rumbo a partir de distancia recorrida sobre la polilínea.
+   - `displace(lat,lon,east,north)` y `applyLateralOffset(...)`: desplazamientos locales para offsets laterales.
+   - `projectToTrack(track,cumulative,point)`: proyecta un punto arbitrario al segmento más cercano, retornando distancia recorrida, punto proyectado, índice de segmento, rumbo y desviación lateral. Se usa tanto en modo real para convertir GPS en avance sobre la pista como en herramientas de simulación.
+
+5. Frontend y flujo de la interfaz (`public/`)
+   5.1 Estructura (index.html):
+       - Layout dividido: mapa (Leaflet) ocupa ~75% y un sidebar con tabla de posiciones y gráfico de velocidad.
+       - Modal de configuración inicial con parámetros de carrera, opción de modo (`Simulada` vs `Real`), carga de pista desde archivo JSON y control para limpiar la pista.
+       - Botones flotantes: engranaje para abrir la configuración y “play” para iniciar la carrera directamente.
+       - Recursos externos: Leaflet (mapa), OpenStreetMap (tiles), Chart.js (gráfica lineal).
+   5.2 Lógica principal (`app.js`):
+       - Inicialización del mapa centrado en Bogotá (lat 4.65178, lon -74.05602) con manejo de clics para agregar vértices cuando la edición está habilitada.
+       - Gestión de pista:
+         • `track` es un arreglo de puntos, representado visualmente como `L.polyline`.
+         • Cada punto tiene marcador draggable (`makeDraggableMarker`). Mientras no haya carrera activa y la casilla de edición permanezca activa, se permite arrastrar vértices.
+         • Funciones auxiliares para mostrar/ocultar marcadores, limpiar pista y reproyectar la línea.
+         • Importación desde archivo JSON con validación básica (array de objetos `{lat, lon}`).
+       - WebSocket:
+         • `connectWS` crea conexión contra el mismo host con protocolo seguro (`wss://`). Se reutiliza la conexión hasta que se cierre.
+         • `startRace` envía comando `start` o `start_real` con parámetros configurados, tras resetear marcadores, gráficas y tablero.
+         • `stopRace` manda `stop`.
+         • `onWSMessage` procesa `tick` y `end`: actualiza o crea marcadores de competidores (Leaflet + íconos HTML), captura datos para la gráfica, calcula tiempos de llegada y refresca el leaderboard animado (efecto FLIP para cambios de posición).
+       - Visualizaciones:
+         • Leaderboard (`updateBoard`) ordena por finalización/avance, mantiene nodos `<li>` cacheados y aplica animación de sobrepaso.
+         • Gráfica de velocidad vs avance (`Chart.js`): dataset por competidor, se va actualizando con datos acumulados (x = progreso %, y = velocidad m/s).
+         • Marcadores de competidores: colores asignados mediante ángulo áureo para mantener distinción; etiquetas alfabéticas generadas incrementalmente (`indexToLetters`).
+       - Estado global gestionado vía colecciones `Map` (competidor→marker, colores, datos de gráfica, nodos del leaderboard).
+       - Al recibir `end`, la IU vuelve a estado editable: reactiva marcadores y limpia el tablero.
+   5.3 Estilos (`styles.css`):
+       - Diseño responsive con flexbox para layout principal.
+       - Modal estilizado con overlay semitransparente.
+       - Cards del leaderboard con sombreado, distribución en columnas para posición, progreso, velocidad y tiempo final.
+       - Botones flotantes en mapa y representación circular de competidores con color y etiqueta.
+
+6. Flujos funcionales destacados
+   - Configuración inicial:
+     1. Usuario abre modal (automático o vía botón) y define parámetros.
+     2. Puede dibujar pista sobre el mapa clic a clic o cargarla desde JSON.
+     3. Opcionalmente ajusta modo (simulado vs real), número de competidores, duración, tick y ancho lateral.
+   - Inicio de carrera simulada:
+     1. `startRace` empaqueta pista y configuraciones.
+     2. Servidor crea `RaceSimulator`, envía `started`. Cada `tick` retransmitido produce actualización visual en el cliente.
+     3. Leaderboard y gráfica se sincronizan en tiempo real; al terminar todos, se recibe `end`.
+   - Modo real (GPS):
+     1. Cliente manda `start_real` con pista y opcionalmente cantidad esperada de competidores.
+     2. Dispositivos externos (p.ej. script `tools/gps-sim.js`) envían mensajes `gps` con `{id, lat, lon, ts}`.
+     3. Servidor proyecta y normaliza posiciones, estima progreso/velocidad y despacha snapshots `tick`.
+     4. Cuando se completa el total esperado (si se definió), se emite `end`.
+   - Detención manual: Botón “Stop” o `stopRace` forcejea finalización y restaura modo edición.
+
+7. Scripts y datos auxiliares
+   - `quicktest.js`: ejecución en consola del simulador, imprime avances y velocidades para depuración sin frontend.
+   - `example.js`: muestra de uso programático del motor de simulación.
+   - `tools/generateOval.js`: genera pistas ovaladas parametrizadas (centro, radios, puntos, rotación) y escribe JSON (incluye cierre del loop).
+   - `tools/gps-sim.js`: cliente de línea de comandos para enviar trazas GPS vía WS, con opciones de resampleo uniforme y pasos adicionales tras la meta.
+   - `tracks.json` y `data_hipodromo_tandil.json`: ejemplos de pistas disponibles para carga rápida (no consumidos automáticamente).
+
+8. Dependencias y requisitos
+   - Node.js ≥ 16 (definido en `package.json`).
+   - Dependencia npm: `ws` (servidor WebSocket). La parte cliente utiliza las implementaciones nativas del navegador.
+   - Recursos externos: OpenStreetMap tiles (requiere acceso a internet) y librerías CDN (Leaflet, Chart.js).
+
+9. Observaciones técnicas
+   - El servidor WebSocket se monta sobre HTTP sin TLS; en despliegues reales se recomienda proxy inverso con certificados para evitar problemas al cargar desde contextos HTTPS.
+   - La interpolación geográfica usa aproximaciones lineales adecuadas para segmentos cortos; para pistas más extensas podría evaluarse interpolación geodésica precisa.
+   - La interfaz asume origen y servidor en mismo host/protocolo (`wss://${window.location.host}`); en desarrollo local sin HTTPS es necesario ajustar a `ws://`.
+   - El modo real mantiene estado en memoria (`currentReal`); para múltiples carreras simultáneas o resiliencia ante reinicios sería necesario persistir o particionar el estado por sesión.
